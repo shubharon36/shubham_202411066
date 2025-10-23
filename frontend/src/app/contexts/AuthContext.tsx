@@ -1,8 +1,7 @@
-use client';
+'use client';
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { apiFetch } from '@/app/lib/api';
-
 type User = {
   id: string;
   name: string;
@@ -36,13 +35,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (t) setToken(t);
       if (u) setUser(JSON.parse(u));
     } catch {}
-
-
-
-
-
-
-
   }, []);
 
   // Keep token in localStorage
@@ -53,16 +45,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, [token]);
 
-
-  // Keep user in localStorage
-  useEffect(() => {
+useEffect(() => {
     try {
       if (user) localStorage.setItem('user', JSON.stringify(user));
       else localStorage.removeItem('user');
     } catch {}
   }, [user]);
 
-  // If we have a token but not a user (e.g. hard refresh), fetch profile
   useEffect(() => {
     (async () => {
       if (token && !user) {
@@ -88,36 +77,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (name: string, email: string, password: string): Promise<User> => {
-    // Do NOT send role from client; backend should default to "customer".
     const res = await apiFetch('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
     });
     setToken(res.token);
     setUser(res.user);
-    return res.user as User; // ← return the user
-
-
-
-
-
-
-
-
-
-
+    return res.user as User; 
   };
 
   const logout = () => {
     setToken(null);
-
-
-
     setUser(null);
   };
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo( () => ({
       user,
       token,
       isAuthenticated: !!token,
