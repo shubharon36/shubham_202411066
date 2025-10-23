@@ -11,7 +11,8 @@ try {
 const express = require('express');
 const cors = require('cors');
 const { connectMongoDB } = require('./config/database');
-
+// In server.js, add this with your other routes
+const seedRoutes = require('./routes/seedRoutes');
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -44,6 +45,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api', seedRoutes);
 
 // Health
 app.get('/health', (_req, res) => {
