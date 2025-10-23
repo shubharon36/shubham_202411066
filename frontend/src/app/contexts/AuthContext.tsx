@@ -1,116 +1,106 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { apiFetch } from '@/app/lib/api';
 
-type User = {
+interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'customer';
-  createdAt?: string;
-};
+  role: string;
+}
 
-type AuthContextType = {
+interface AuthContextType {
   user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  // return User so callers can check role immediately
-  login: (email: string, password: string) => Promise<User>;
-  register: (name: string, email: string, password: string) => Promise<User>;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-};
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Hydrate from localStorage on first mount
   useEffect(() => {
-    try {
-      const t = localStorage.getItem('token');
-      const u = localStorage.getItem('user');
-      if (t) setToken(t);
-      if (u) setUser(JSON.parse(u));
-    } catch {}
+    // Check for existing user on mount
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const userData = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    
+    if (token && userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
+    setLoading(false);
   }, []);
 
-  // Keep token in localStorage
-  useEffect(() => {
+  const login = async (email: string, password: string) => {
     try {
-      if (token) localStorage.setItem('token', token);
-      else localStorage.removeItem('token');
-    } catch {}
-  }, [token]);
+      console.log('AuthContext: Calling login API...');
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
 
-  // Keep user in localStorage
-  useEffect(() => {
-    try {
-      if (user) localStorage.setItem('user', JSON.stringify(user));
-      else localStorage.removeItem('user');
-    } catch {}
-  }, [user]);
+      console.log('AuthContext: Login successful', data);
 
-  // If we have a token but not a user (e.g. hard refresh), fetch profile
-  useEffect(() => {
-    (async () => {
-      if (token && !user) {
-        try {
-          const res = await apiFetch('/auth/profile');
-          setUser(res?.user ?? null);
-        } catch {
-          setToken(null);
-          setUser(null);
-        }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
       }
-    })();
-  }, [token, user]);
-
-  const login = async (email: string, password: string): Promise<User> => {
-    const res = await apiFetch('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    setToken(res.token);
-    setUser(res.user);
-    return res.user as User; // ← return the user
+      setUser(data.user);
+    } catch (error: any) {
+      console.error('AuthContext: Login failed', error);
+      throw error;
+    }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<User> => {
-    // Do NOT send role from client; backend should default to "customer".
-    const res = await apiFetch('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ name, email, password }),
-    });
-    setToken(res.token);
-    setUser(res.user);
-    return res.user as User; // ← return the user
+  const register = async (name: string, email: string, password: string) => {
+    try {
+      console.log('AuthContext: Calling register API...');
+      const data = await apiFetch('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password, role: 'customer' }),
+      });
+
+      console.log('AuthContext: Registration successful', data);
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      setUser(data.user);
+    } catch (error: any) {
+      console.error('AuthContext: Registration failed', error);
+      throw error;
+    }
   };
 
   const logout = () => {
-    setToken(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
     setUser(null);
   };
 
-  const value = useMemo(
-    () => ({
-      user,
-      token,
-      isAuthenticated: !!token,
-      login,
-      register,
-      logout,
-    }),
-    [user, token]
+  return (
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
