@@ -24,7 +24,11 @@ async function getProducts(params: {
   category?: string; 
   sort?: Search["sort"];
 }) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://shubham-202411066.onrender.com';
+  // Get API URL and ensure it doesn't end with /api
+  let API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://shubham-202411066.onrender.com';
+  
+  // Remove trailing slashes and /api if present
+  API_URL = API_URL.replace(/\/+$/, '').replace(/\/api$/, '');
   
   if (!API_URL?.startsWith("http")) {
     throw new Error("API URL not configured");
