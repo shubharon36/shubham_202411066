@@ -1,5 +1,5 @@
 // src/app/lib/api.ts
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+const BASE = process.env.NEXT_PUBLIC_API_URL;
 
 // Small helper to safely join paths
 function join(base: string, path: string) {
