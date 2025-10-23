@@ -4,40 +4,56 @@ import { ProductFilters } from "./_components/ProductFilters";
 
 export const dynamic = "force-dynamic";
 
-const API = process.env.NEXT_PUBLIC_API_URL!; // e.g. https://your-backend/api
+const API = process.env.NEXT_PUBLIC_API_URL ?? ""; // must be set on Vercel
 
 type Search = {
   page?: string;
-  query?: string;      // from your UI
+  query?: string;        // UI name
   category?: string;
   sort?: "price_asc" | "price_desc" | "name_asc" | "name_desc";
 };
 
-function isPriceSort(s?: string): s is "price_asc" | "price_desc" {
+function isPriceSort(s?: string) {
   return s === "price_asc" || s === "price_desc";
 }
-function isNameSort(s?: string): s is "name_asc" | "name_desc" {
+function isNameSort(s?: string) {
   return s === "name_asc" || s === "name_desc";
 }
 
-async function getProducts(spObj: Search) {
-  const sp = new URLSearchParams();
-  const page = Number(spObj.page ?? 1);
-  sp.set("page", String(page));
-
-  // your backend expects ?search=... (not ?query=...)
-  if (spObj.query) sp.set("search", spObj.query);
-  if (spObj.category) sp.set("category", spObj.category);
-
-  // server-side price sorting
-  if (isPriceSort(spObj.sort)) {
-    sp.set("sortOrder", spObj.sort === "price_asc" ? "asc" : "desc");
+async function getProducts(params: {
+  page: number;
+  query?: string;
+  category?: string;
+  sort?: Search["sort"];
+}) {
+  if (!API) {
+    // Helpful message in case env is missing at runtime
+    throw new Error(
+      "NEXT_PUBLIC_API_URL is not set on the server. Configure it on Vercel → Project → Settings → Environment Variables."
+    );
   }
 
-  const res = await fetch(`${API}/products?${sp.toString()}`, { cache: "no-store" });
+  const sp = new URLSearchParams();
+  sp.set("page", String(params.page));
+  // Your backend expects ?search=... (not ?query=...)
+  if (params.query) sp.set("search", params.query);
+  if (params.category) sp.set("category", params.category);
+
+  // Map UI price sorts -> backend sortOrder
+  if (isPriceSort(params.sort)) {
+    sp.set("sortOrder", params.sort === "price_asc" ? "asc" : "desc");
+  }
+
+  const res = await fetch(`${API}/products?${sp.toString()}`, {
+    cache: "no-store",
+  });
 
   if (!res.ok) {
-    return { products: [], totalPages: 1 };
+    // Surface why it failed instead of a generic digest
+    const text = await res.text().catch(() => "");
+    throw new Error(
+      `API ${res.status} for /products: ${text || res.statusText}`
+    );
   }
 
   const data = await res.json();
@@ -47,12 +63,14 @@ async function getProducts(spObj: Search) {
     ...p,
   }));
 
-  // client-side name sorting (backend doesn’t support name sort)
-  if (isNameSort(spObj.sort)) {
+  // Name sorting is ONLY client-side
+  if (isNameSort(params.sort)) {
     products.sort((a: any, b: any) => {
       const na = String(a.name ?? "").toLowerCase();
       const nb = String(b.name ?? "").toLowerCase();
-      return spObj.sort === "name_asc" ? na.localeCompare(nb) : nb.localeCompare(na);
+      return params.sort === "name_asc"
+        ? na.localeCompare(nb)
+        : nb.localeCompare(na);
     });
   }
 
@@ -68,8 +86,14 @@ export default async function ProductsPage({
   searchParams: Promise<Search>;
 }) {
   const sp = await searchParams;
+  const page = Number(sp?.page ?? 1);
 
-  const { products, totalPages } = await getProducts(sp ?? {});
+  const { products, totalPages } = await getProducts({
+    page,
+    query: sp?.query,
+    category: sp?.category,
+    sort: sp?.sort,
+  });
 
   return (
     <div style={{ display: "grid", gap: "var(--spacing-lg)" }}>
