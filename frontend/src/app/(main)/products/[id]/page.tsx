@@ -3,7 +3,7 @@ import ProductDetailClient from "./ProductDetailClient";
 
 export const dynamic = "force-dynamic";
 
-const API = process.env.NEXT_PUBLIC_API_URL!; // e.g. http://127.0.0.1:5000/api
+const API = process.env.NEXT_PUBLIC_API_URL!; // e.g. https://your-backend/api
 
 export default async function ProductDetailPage({
   params,
@@ -13,7 +13,6 @@ export default async function ProductDetailPage({
   const { id } = await params;
 
   const res = await fetch(`${API}/products/${id}`, { cache: "no-store" });
-
   if (!res.ok) {
     return (
       <div style={{ padding: 24, textAlign: "center" }}>
@@ -25,6 +24,5 @@ export default async function ProductDetailPage({
   const data = await res.json();
   const product = { id: data.product._id || data.product.id, ...data.product };
 
-  // Pass normalized product to the client component
   return <ProductDetailClient product={product} />;
 }
