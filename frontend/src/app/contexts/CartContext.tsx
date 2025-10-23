@@ -36,7 +36,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'cart:v2';
 const LEGACY_KEY = 'ecom_cart';
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function normalizeFromBackend(items: any[] = []): CartItem[] {
   return items.map((it) => {
