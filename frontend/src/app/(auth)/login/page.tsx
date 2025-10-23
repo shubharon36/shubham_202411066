@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/app/components/ui/atoms/Button";
 import { Input } from "@/app/components/ui/atoms/Input";
 
-// Keep the hook usage in an inner component
 function LoginInner() {
   const { login } = useAuth();
   const router = useRouter();
@@ -45,9 +44,7 @@ function LoginInner() {
           <Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required />
         </label>
         {err && <div style={{ color: "red" }}>{err}</div>}
-        <Button type="submit" disabled={loading}>
-          {loading ? "Signing in..." : "Sign in"}
-        </Button>
+        <Button type="submit" disabled={loading}>{loading ? "Signing in..." : "Sign in"}</Button>
       </form>
 
       <p style={{ marginTop: 12, color: "var(--muted-foreground)" }}>
