@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/app/components/ui/atoms/Button";
 import { Input } from "@/app/components/ui/atoms/Input";
 
-export default function LoginPage() {
+// Keep the hook usage in an inner component
+function LoginInner() {
   const { login } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
@@ -44,12 +45,24 @@ export default function LoginPage() {
           <Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required />
         </label>
         {err && <div style={{ color: "red" }}>{err}</div>}
-        <Button type="submit" disabled={loading}>{loading ? "Signing in..." : "Sign in"}</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Signing in..." : "Sign in"}
+        </Button>
       </form>
 
       <p style={{ marginTop: 12, color: "var(--muted-foreground)" }}>
         No account? <a href="/register">Register</a>
       </p>
     </div>
+  );
+}
+
+export const dynamic = "force-dynamic";
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 24 }}>Loading…</div>}>
+      <LoginInner />
+    </Suspense>
   );
 }
