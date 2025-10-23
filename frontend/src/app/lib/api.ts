@@ -1,46 +1,29 @@
-// src/app/lib/api.ts
-const BASE = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// Small helper to safely join paths
-function join(base: string, path: string) {
-  if (!path) return base;
-  return `${base.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+if (!API_URL?.startsWith("http")) {
+  throw new Error(
+    "NEXT_PUBLIC_API_URL is missing or invalid. " +
+    "Set it in Vercel → Project → Settings → Environment Variables."
+  );
 }
 
-export async function apiFetch(
-  path: string,
-  options: RequestInit & { noAuth?: boolean } = {}
-) {
-  const url = join(BASE, path);
+export async function apiFetch(path: string, init: RequestInit = {}) {
+  const url = path.startsWith("http")
+    ? path
+    : `${API_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string>),
-  };
-
-  // attach token by default
-  if (!options.noAuth) {
-    try {
-      const t = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      if (t) headers.Authorization = `Bearer ${t}`;
-    } catch {}
-  }
-
-  const res = await fetch(url, { ...options, headers });
-
-  let data: any = null;
-  try {
-    data = await res.json();
-  } catch {
-    // ignore non-JSON responses
-  }
+  const res = await fetch(url, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
+    },
+    cache: "no-store",
+  });
 
   if (!res.ok) {
-    const message = data?.error || data?.message || `Request failed (${res.status})`;
-    const err: any = new Error(message);
-    err.status = res.status;
-    throw err;
+    const text = await res.text().catch(() => "");
+    throw new Error(`API ${res.status} ${res.statusText} for ${url}: ${text}`);
   }
-
-  return data;
+  return res.json();
 }
