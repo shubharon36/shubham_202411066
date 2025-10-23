@@ -1,0 +1,102 @@
+.hero {
+  min-height: 100vh;
+  /* Swapped to a subtle radial gradient for a more modern feel */
+  background: radial-gradient(ellipse at top, hsl(var(--secondary)), hsl(var(--muted)) 70%);
+}
+
+.heroContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl) var(--spacing-md);
+}
+
+@media (min-width: 640px) {
+  .heroContainer {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+  }
+}
+
+.heroContent {
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: var(--font-size-4xl);
+  font-weight: 800; /* Bolder */
+  letter-spacing: -0.025em; /* Tighter letter spacing */
+  margin-bottom: var(--spacing-lg);
+  color: hsl(var(--foreground));
+}
+
+@media (min-width: 640px) {
+  .heroTitle {
+    font-size: var(--font-size-5xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitle {
+    font-size: var(--font-size-6xl);
+  }
+}
+
+.heroDescription {
+  font-size: var(--font-size-lg);
+  color: hsl(var(--muted-foreground));
+  margin-bottom: var(--spacing-lg);
+  max-width: 672px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .heroDescription {
+    font-size: var(--font-size-xl);
+  }
+}
+
+.features {
+  margin-top: var(--spacing-2xl);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (min-width: 768px) {
+  .features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.feature {
+  text-align: center;
+  padding: var(--spacing-lg);
+  background-color: hsl(var(--card) / 0.5); /* Semi-transparent card */
+  border-radius: var(--radius-lg);
+  border: 1px solid hsl(var(--border) / 0.5);
+  transition: all 0.2s ease;
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px hsla(var(--foreground) / 0.05);
+  background-color: hsl(var(--card));
+}
+
+.featureIcon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--spacing-md);
+  color: hsl(var(--primary)); /* Added color to the icon */
+}
+
+.featureTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: hsl(var(--foreground));
+}
+
+.featureDescription {
+  color: hsl(var(--muted-foreground));
+  font-size: var(--font-size-sm); /* Slightly smaller */
+}

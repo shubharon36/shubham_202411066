@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body { margin: 0; background: var(--bg); color: var(--foreground); }
+
+:root {
+  /* Color Palette (HSL-based for a modern theme) */
+  --primary: 262 84% 58%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --muted: 210 40% 98%; /* Light gray background for the body */
+  --muted-foreground: 215 20% 45%;
+  --border: 214 32% 91%;
+  --card: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 262 84% 58%;
+  --header-height: 64px;
+  --bg: #0b1220;
+  --panel: #0f172a;
+  --foreground: #e5e7eb;
+  --muted-foreground: #94a3b8;
+  --border: rgba(148,163,184,.18);
+
+  /* Spacing (converted to rem) */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+  --spacing-xl: 2rem; /* 32px */
+  --spacing-2xl: 3rem; /* 48px */
+
+  /* Radius (converted to rem) */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+
+  /* Font Sizes (converted to rem) */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+  --font-size-5xl: 3rem; /* 48px */
+  --font-size-6xl: 3.75rem; /* 60px */
+}
+
+/* Dark mode palette (example) */
+.dark {
+  --primary: 262 84% 68%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 217 33% 17%;
+  --background: 222 47% 9%;
+  --foreground: 210 40% 98%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  --border: 217 33% 27%;
+  --card: 222 47% 9%;
+  --destructive: 0 84% 70%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 262 84% 68%;
+}
+
+html,
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: hsl(var(--muted)); /* Changed to light gray */
+  color: hsl(var(--foreground));
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

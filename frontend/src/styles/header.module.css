@@ -1,0 +1,119 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  background: rgba(11, 18, 32, .9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(148,163,184,.15);
+}
+
+.container {
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+.headerContent {
+  display: flex;
+  height: 64px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+}
+
+.logoText {
+  font-size: var(--font-size-2xl);
+  font-weight: bold;
+  color: hsl(var(--primary));
+}
+
+.nav {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+@media (min-width: 768px) {
+  .nav {
+    display: flex;
+  }
+}
+
+.navLink {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.navLink:hover {
+  color: hsl(var(--primary));
+}
+
+.cartLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  transition: color 0.2s ease;
+}
+
+.cartLink:hover {
+  color: hsl(var(--primary));
+}
+
+.cartBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  font-size: var(--font-size-xs);
+  font-weight: bold;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobileNav {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .mobileNav {
+    display: none;
+  }
+}
