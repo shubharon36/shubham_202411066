@@ -1,115 +1,180 @@
+# ShopHub – Full-Stack E-Commerce Platform
 
-# ShopHub – Full-Stack E-Commerce (MVC, SQL + MongoDB)
+> A production-ready e-commerce application built with Node.js, Express, Next.js, PostgreSQL, and MongoDB demonstrating modern web development practices.
 
-> *Note: If any hosted URL is temporarily unavailable, I can provide a short video demo of the full workflow (browsing, cart, checkout, admin) on request.*
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://shubham-202411066.vercel.app)
+[![Backend API](https://img.shields.io/badge/API-online-blue)](https://shubham-202411066.onrender.com/api)
 
-## Overview
+---
 
-ShopHub is a production-ready, full-stack e-commerce web application that demonstrates a clean MVC backend with a modern Next.js frontend.
+## 📋 Table of Contents
 
-It implements authentication (JWT), product catalog (MongoDB), transactional orders (PostgreSQL via Prisma), cart & checkout, and admin product management.
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Live Deployments](#live-deployments)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Database Configuration](#database-configuration)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Security Notes](#security-notes)
 
-The app also includes server-side sorting logic, and two analytics reports (one SQL aggregation and one MongoDB aggregation).
+---
 
-## Key Features
+## 🎯 Overview
 
-* **Auth (JWT + bcrypt):** register, login, logout; roles: admin, customer
-* **Products (MongoDB):** CRUD for admins, search, category filter, pagination
-* **Server-side sorting:** default price DESC; can be overridden by `?sortOrder=asc` or header `x-sort-order: asc`
-* **Cart & Checkout:** add/update/remove items; server-calculated totals; order creation persists to SQL
-* **Orders (PostgreSQL + Prisma):** order header + order items; admin or customer scopes
-* **Reports:**
-    * SQL aggregation (e.g., daily revenue)
-    * MongoDB aggregation (e.g., category-wise sales)
-* **Responsive UI (Next.js App Router)** with protected Admin pages
-* **Deployed:** Frontend on Vercel, Backend on Render
+ShopHub is a full-stack e-commerce web application implementing clean MVC architecture on the backend with a modern Next.js frontend. The application demonstrates:
 
-## Tech Stack
+- JWT-based authentication with role-based access control
+- Product catalog management using MongoDB
+- Transactional order processing with PostgreSQL
+- Shopping cart and checkout functionality
+- Admin dashboard for product management
+- Server-side sorting and filtering
+- Analytics reports using SQL and MongoDB aggregations
+
+---
+
+## ✨ Key Features
+
+### Authentication & Authorization
+- **JWT + bcrypt** secure authentication
+- Role-based access control (Admin, Customer)
+- Register, login, logout functionality
+
+### Product Management
+- **CRUD operations** for administrators
+- Search functionality with text indexing
+- Category filtering
+- Pagination support
+- **Server-side sorting** (default: price DESC, override via query param `?sortOrder=asc` or header `x-sort-order: asc`)
+
+### Shopping Experience
+- Add/update/remove items from cart
+- Server-calculated totals
+- Secure checkout process
+- Order history tracking
+
+### Order Management
+- PostgreSQL-backed order persistence
+- Order header + line items structure
+- Admin order management
+- Customer order tracking
+
+### Analytics & Reporting
+- SQL aggregation reports (e.g., daily revenue)
+- MongoDB aggregation reports (e.g., category-wise sales)
+
+### User Interface
+- Responsive design with Next.js App Router
+- Protected admin pages
+- Modern CSS Modules styling
+- Context-based state management
+
+---
+
+## 🛠 Tech Stack
 
 ### Frontend
-
-* Next.js 15+ (App Router, TypeScript)
-* CSS Modules (and small utility classes)
-* Context-based auth & cart state
+- **Framework:** Next.js 15+ (App Router, TypeScript)
+- **Styling:** CSS Modules with utility classes
+- **State Management:** React Context API
+- **Deployment:** Vercel
 
 ### Backend
+- **Runtime:** Node.js
+- **Framework:** Express (MVC Architecture)
+- **Authentication:** JWT (jsonwebtoken) + bcrypt
+- **Deployment:** Render
 
-* Node.js, Express (MVC)
-* PostgreSQL (orders, order_items)
-* Prisma ORM
-* MongoDB / Mongoose (products)
-* JWT (jsonwebtoken) + bcrypt
+### Databases
+- **PostgreSQL:** Orders and order items (via Prisma ORM)
+- **MongoDB:** Product catalog (via Mongoose)
 
 ### Testing
+- **Backend:** Jest + Supertest
+- **Frontend:** Manual QA checklist
 
-* Jest + Supertest for backend (API-level tests)
-* Lightweight manual QA checklist for UI
+---
 
-## Live Deployments
+## 🌐 Live Deployments
 
-* **Frontend (Vercel):** [https://shubham-202411066.vercel.app](https://shubham-202411066.vercel.app)
-* **(or current preview):** [https://shubham-202411066-git-main-shubharon36s-projects.vercel.app/](https://shubham-202411066-git-main-shubharon36s-projects.vercel.app/)
-* **Backend (Render):**
-    * **Base:** [https://shubham-202411066.onrender.com](https://shubham-202411066.onrender.com)
-    * **API Base:** [https://shubham-202411066.onrender.com/api](https://shubham-202411066.onrender.com/api)
-    * **Health:** [https://shubham-202411066.onrender.com/health](https://shubham-202411066.onrender.com/health)
+### Frontend
+- **Production:** [https://shubham-202411066.vercel.app](https://shubham-202411066.vercel.app)
+- **Preview:** [https://shubham-202411066-git-main-shubharon36s-projects.vercel.app/](https://shubham-202411066-git-main-shubharon36s-projects.vercel.app/)
 
-The frontend reads the API base from `NEXT_PUBLIC_API_URL`.
+### Backend
+- **Base URL:** [https://shubham-202411066.onrender.com](https://shubham-202411066.onrender.com)
+- **API Base:** [https://shubham-202411066.onrender.com/api](https://shubham-202411066.onrender.com/api)
+- **Health Check:** [https://shubham-202411066.onrender.com/health](https://shubham-202411066.onrender.com/health)
 
-## Admin Login (for Evaluation)
+### Admin Credentials (For Evaluation)
+```
+Email: admin@shophub.local
+Password: admin123
+```
 
-* **Email:** `admin@shophub.local`
-* **Password:** `admin123`
+> ⚠️ **Note:** Change these credentials in production environments.
 
-The admin account is auto-seeded on boot (if not present).
+---
 
-You can change these via env vars: `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME`.
+## 📁 Project Structure
 
-## Project Structure
-
+```
 .
-├─ backend/                 # Node/Express, MVC
-│  ├─ config/               # Mongo, Prisma, admin seeding
-│  ├─ controllers/          # auth, product, cart, order, report
-│  ├─ middleware/           # authenticate, authorize
-│  ├─ models/               # Mongoose models (Product)
-│  ├─ prisma/               # Prisma schema & migrations (orders, items, users)
-│  ├─ routes/               # Express routes per domain
-│  ├─ server.js             # App bootstrap
-│  └─ package.json
-└─ frontend/                # Next.js (App Router)
-   ├─ src/app/              # routes, components, contexts
-   │  ├─ (main)/            # store-facing pages (products, cart, checkout)
-   │  ├─ (auth)/            # login, register
-   │  ├─ admin/             # admin-only pages
-   │  ├─ lib/               # api helper, utilities
-   │  └─ styles/            # CSS Modules
-   └─ package.json
+├── backend/                 # Node/Express MVC Backend
+│   ├── config/             # Database connections, admin seeding
+│   ├── controllers/        # Business logic (auth, product, cart, order, report)
+│   ├── middleware/         # Authentication & authorization
+│   ├── models/             # Mongoose models (Product)
+│   ├── prisma/             # Prisma schema & migrations (orders, items, users)
+│   ├── routes/             # Express route definitions
+│   ├── server.js           # Application entry point
+│   └── package.json
+│
+└── frontend/               # Next.js Frontend
+    ├── src/
+    │   └── app/
+    │       ├── (main)/     # Store-facing pages (products, cart, checkout)
+    │       ├── (auth)/     # Authentication pages (login, register)
+    │       ├── admin/      # Admin-only pages
+    │       ├── lib/        # API helpers and utilities
+    │       └── styles/     # CSS Modules
+    └── package.json
+```
 
-Local Setup
-Prerequisites
-Node.js 18+ (22 is fine)
+---
 
-npm (or pnpm)
+## 🚀 Getting Started
 
-PostgreSQL instance
+### Prerequisites
 
-MongoDB (local or Atlas cluster)
+- Node.js 18+ (v22 recommended)
+- npm or pnpm
+- PostgreSQL instance
+- MongoDB (local or Atlas cluster)
 
-1) Clone
-Bash
+### 1. Clone the Repository
 
-git clone https://github.com/<you>/<repo>.git
-cd <repo>
-2) Backend – Install & Environment
-Bash
+```bash
+git clone https://github.com/<your-username>/<repo-name>.git
+cd <repo-name>
+```
 
+### 2. Backend Setup
+
+```bash
 cd backend
 npm install
-Create backend/.env:
+```
 
-Ini, TOML
+Create `backend/.env`:
 
+```env
 # Server
 PORT=5000
 NODE_ENV=development
@@ -126,232 +191,333 @@ JWT_SECRET="change-me-please"
 # CORS (your local Next dev URL)
 CORS_ORIGIN="http://localhost:3000"
 
-# Admin seed (optional; defaults used if missing)
+# Admin Seed (optional)
 ADMIN_EMAIL="admin@shophub.local"
 ADMIN_PASSWORD="Admin@12345"
 ADMIN_NAME="Shop Admin"
-3) Backend – Migrate (Prisma) & Run
-Bash
+```
 
-# Apply SQL schema locally
+Run database migrations and start the server:
+
+```bash
+# Apply Prisma migrations
 npx prisma migrate dev
 
-# Start backend
+# Start backend server
 npm run dev
-# or: npm start
-4) Frontend – Install & Environment
-Bash
+```
 
+### 3. Frontend Setup
+
+```bash
 cd ../frontend
 npm install
-Create frontend/.env.local:
+```
 
+Create `frontend/.env.local`:
 
+```env
 # Always include /api at the end
 NEXT_PUBLIC_API_URL=http://127.0.0.1:5000/api
-5) Frontend – Run
-Bash
+```
 
+Start the development server:
+
+```bash
 npm run dev
-# open http://localhost:3000
-Environment Variables (Production)
-Backend (Render)
+```
 
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🔐 Environment Variables
+
+### Backend (Production - Render)
+
+```env
 PORT=5000
 NODE_ENV=production
-DATABASE_URL=<your Render PostgreSQL URL>
-MONGODB_URI=<your MongoDB Atlas SRV connection string + db name>
+DATABASE_URL=<your-render-postgresql-url>
+MONGODB_URI=<your-mongodb-atlas-connection-string>
 JWT_SECRET=<strong-random-secret>
 CORS_ORIGIN=https://shubham-202411066.vercel.app
 ADMIN_EMAIL=admin@shophub.local
 ADMIN_PASSWORD=admin123
 ADMIN_NAME=Shop Admin
-Frontend (Vercel)
+```
 
+### Frontend (Production - Vercel)
+
+```env
 NEXT_PUBLIC_API_URL=https://shubham-202411066.onrender.com/api
-Important: The frontend must not call localhost in production.
+```
 
-Ensure you have no rewrites to localhost in next.config.js for production.
+> ⚠️ **Important:** The frontend must NOT call localhost in production. Remove any rewrites to localhost in `next.config.js`.
 
-Database Configuration & Migrations
-SQL (PostgreSQL via Prisma)
-Entities: users, orders, order_items
+---
 
-Apply migrations locally:
+## 💾 Database Configuration
 
+### PostgreSQL (via Prisma)
 
+**Entities:** `users`, `orders`, `order_items`
+
+#### Local Development
+
+```bash
 cd backend
 npx prisma migrate dev
-On Render (deploy hook):
+```
 
+#### Production Deployment
 
-npx prisma migrate deploy && node server.js
-MongoDB (Products)
-Collection: products
+```bash
+npx prisma migrate deploy
+```
 
-Indexed for search:
+### MongoDB (Products)
 
-name, description text index
+**Collection:** `products`
 
-category + price index for common queries
+**Indexes:**
+- Text index on `name` and `description` for search
+- Compound index on `category` + `price` for filtering
 
-Atlas connection string example:
+**Atlas Connection String Example:**
 
+```
 mongodb+srv://<user>:<URL_ENCODED_PASSWORD>@cluster0.xxxxx.mongodb.net/ecommerce_products?retryWrites=true&w=majority&appName=Cluster0
-Testing
-Backend (Jest + Supertest)
-Assuming Jest is installed in backend/devDependencies:
+```
 
+---
 
+## 📡 API Documentation
+
+### Base URL
+```
+/api
+```
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/register` | Register new user | No |
+| POST | `/auth/login` | Login user | No |
+| GET | `/auth/profile` | Get user profile | Yes |
+
+**Request Body Examples:**
+
+```json
+// Register/Login
+{
+  "name": "John Doe",      // register only
+  "email": "user@example.com",
+  "password": "securepass123"
+}
+```
+
+### Product Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/products` | List products with filters | No |
+| GET | `/products/categories` | List all categories | No |
+| GET | `/products/:id` | Get product details | No |
+| POST | `/products` | Create product | Admin |
+| PUT | `/products/:id` | Update product | Admin |
+| DELETE | `/products/:id` | Delete product | Admin |
+
+**Query Parameters for `/products`:**
+- `page` (default: 1)
+- `limit` (default: 10)
+- `category` (filter by category)
+- `search` (text search on name/description)
+- `sortOrder` (asc/desc, default: desc by price)
+
+**Alternative:** Use header `x-sort-order: asc` for sorting.
+
+### Cart Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/cart` | Get current cart | Yes |
+| POST | `/cart/add` | Add item to cart | Yes |
+| PUT | `/cart/update` | Update item quantity | Yes |
+| DELETE | `/cart/:productId` | Remove item | Yes |
+| DELETE | `/cart` | Clear cart | Yes |
+
+**Request Body Examples:**
+
+```json
+// Add to cart
+{
+  "productId": "60d5ec49f1b2c8b1f8e4e1a1",
+  "quantity": 2
+}
+
+// Update cart
+{
+  "productId": "60d5ec49f1b2c8b1f8e4e1a1",
+  "quantity": 0  // 0 removes the item
+}
+```
+
+### Order Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/orders` | Create new order | Yes |
+| GET | `/orders` | List orders | Yes |
+| GET | `/orders/:id` | Get order details | Yes |
+| PUT | `/orders/:id/status` | Update order status | Admin |
+
+**Request Body Examples:**
+
+```json
+// Create order
+{
+  "items": [
+    {
+      "productId": "60d5ec49f1b2c8b1f8e4e1a1",
+      "quantity": 2
+    }
+  ]
+}
+
+// Update status
+{
+  "status": "completed"  // pending | completed | cancelled
+}
+```
+
+### Report Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/reports/sql/daily-revenue` | SQL aggregation report | Admin |
+| GET | `/reports/mongo/category-sales` | MongoDB aggregation report | Admin |
+
+---
+
+## 🧪 Testing
+
+### Backend Testing (Jest + Supertest)
+
+```bash
 cd backend
 npm test
-Typical tests cover:
+```
 
-Auth (register/login/profile)
+**Test Coverage:**
+- Authentication (register/login/profile)
+- Product listing with filters and server-side sorting
+- Cart lifecycle (add/update/remove)
+- Order creation (stock validation, total calculation, persistence)
 
-Product listing filters & server-side sorting
+**Adding Test Script:**
 
-Cart lifecycle (add/update/remove)
+If not present, add to `backend/package.json`:
 
-Order creation (stock checks, totals, persistence)
-
-If you don’t see a test script, you can add one in backend/package.json:
-
-JSON
-
+```json
 "scripts": {
   "test": "jest --runInBand"
 }
-Manual QA (UI)
-Browse /products → filter by category/search → verify server-sorted results.
+```
 
-Add items to cart → update quantities → ensure totals update.
+### Manual QA Checklist
 
-Checkout → see new order in SQL.
+- [ ] Browse `/products` → filter by category/search → verify server-sorted results
+- [ ] Add items to cart → update quantities → verify totals update correctly
+- [ ] Complete checkout → verify new order appears in database
+- [ ] Admin: `/admin/products` → create/update/delete product → verify on storefront
+- [ ] Test SQL and MongoDB reports pages
+- [ ] Verify authentication flows (login/logout/protected routes)
 
-Admin → /admin/products → create/update/delete product, then verify on storefront.
+---
 
-Try SQL & Mongo reports pages.
+## 🚢 Deployment
 
-API Summary
-Base URL: /api
+### Vercel (Frontend)
 
-Auth
-POST /auth/register – { name, email, password } → JWT + user
+1. Connect your GitHub repository to Vercel
+2. Set environment variable:
+   ```
+   NEXT_PUBLIC_API_URL=https://shubham-202411066.onrender.com/api
+   ```
+3. Deploy with "Do not use cache" when changing environment variables
+4. Ensure no `localhost` references in `next.config.js` for production
 
-POST /auth/login – { email, password } → JWT + user
+### Render (Backend)
 
-GET /auth/profile – (Bearer token) → user profile
+1. Create a new Web Service on Render
+2. Connect your GitHub repository
+3. Set all backend environment variables (see [Environment Variables](#environment-variables))
+4. Set build command:
+   ```bash
+   npm install
+   ```
+5. Set start command:
+   ```bash
+   npx prisma migrate deploy && node server.js
+   ```
+6. Ensure MongoDB Atlas IP Access List allows `0.0.0.0/0` or Render's egress IPs
 
-Products (MongoDB)
-GET /products – query params:
+---
 
-page (default 1), limit (default 10)
+## 🔧 Troubleshooting
 
-category
+### Frontend: ECONNREFUSED 127.0.0.1:5000
 
-search (text search on name/description)
+**Problem:** Frontend is pointing to localhost instead of production backend.
 
-Server-side sort:
+**Solution:**
+- For development: Set `NEXT_PUBLIC_API_URL=http://127.0.0.1:5000/api` in `frontend/.env.local`
+- For production: Set `NEXT_PUBLIC_API_URL=https://<your-backend>.onrender.com/api` in Vercel environment variables
+- Remove any production rewrites to localhost in `next.config.js`
 
-default: price desc
+### Backend: MongoDB Connection Error
 
-override: ?sortOrder=asc or header x-sort-order: asc
+**Problem:** Cannot connect to MongoDB Atlas from Render.
 
-GET /products/categories – list of categories
+**Solution:**
+- Add `0.0.0.0/0` to IP Access List in MongoDB Atlas (for testing)
+- Ensure `MONGODB_URI` includes the database name
+- Verify URL encoding of special characters in password
 
-GET /products/:id – product detail
+### Authentication: JWT Errors
 
-Admin only:
+**Problem:** Token verification fails or returns errors.
 
-POST /products – create
+**Solution:**
+- Ensure `JWT_SECRET` is set in backend environment variables
+- Verify the secret matches between development and production
+- Check token expiration settings
 
-PUT /products/:id – update
+### Backend: Database Migration Failures
 
-DELETE /products/:id – delete
+**Problem:** Prisma migrations fail on deployment.
 
-Cart
-(Authenticated)
+**Solution:**
+- Verify `DATABASE_URL` is correctly formatted
+- Ensure PostgreSQL instance is accessible
+- Check that database user has sufficient permissions
+- Review migration history: `npx prisma migrate status`
 
-GET /cart – current user’s cart
+---
 
-POST /cart/add – { productId, quantity }
+## 🔒 Security Notes
 
-PUT /cart/update – { productId, quantity } (0 removes)
+- **JWT Secret:** Use a strong, random secret and rotate regularly in production
+- **Admin Credentials:** Default credentials are for evaluation only. Change immediately in production
+- **CORS:** Limit `CORS_ORIGIN` to known domains in production environments
+- **Environment Variables:** Never commit `.env` files to version control
+- **Database Access:** Use least-privilege principles for database users
+- **Password Hashing:** All passwords are hashed using bcrypt before storage
+- **API Rate Limiting:** Consider implementing rate limiting for production deployments
 
-DELETE /cart/:productId – remove one item
+---
 
-DELETE /cart – clear all
 
-Orders (PostgreSQL)
-(Authenticated)
-
-POST /orders – { items: [{ productId, quantity }] }
-
-Server validates stock and prices, calculates totals, persists order + order_items, decrements stock
-
-GET /orders – customer sees own orders; admin sees all
-
-GET /orders/:id – details
-
-PUT /orders/:id/status – admin only status ∈ { pending, completed, cancelled }
-
-Reports
-GET /reports/sql/daily-revenue – SQL aggregation
-
-GET /reports/mongo/category-sales – Mongo aggregation
-
-Frontend Routes
-/ – Landing
-
-/products – Catalog (search, filters, pagination, server-sorted)
-
-/products/[id] – Product detail
-
-/cart – Cart page
-
-/checkout – Checkout page (auth modal if not logged in)
-
-/orders/success – Thank-you page
-
-/login & /register
-
-/admin/products – Admin product CRUD (admin-only)
-
-Deployment Notes
-Vercel (Frontend)
-Set NEXT_PUBLIC_API_URL to your Render API base with /api suffix
-
-e.g., https://<your-backend>.onrender.com/api
-
-Redeploy with “Do not use cache” when changing env vars.
-
-Render (Backend)
-Add all backend env vars (see above)
-
-Start command:
-
-npx prisma migrate deploy && node server.js
-Ensure your MongoDB Atlas IP Access List allows 0.0.0.0/0 (or the Render egress IPs).
-
-Troubleshooting
-Vercel “ECONNREFUSED 127.0.0.1:5000”
-
-Your frontend is still pointing to localhost.
-
-Fix: In frontend/.env.local for dev OR in Vercel env for prod, set NEXT_PUBLIC_API_URL to your public backend URL (https://…onrender.com/api). Remove production rewrites to localhost in next.config.js.
-
-MongoDB connection error on Render
-
-Allow public IPs in Atlas (0.0.0.0/0 for testing) and ensure MONGODB_URI includes the database name.
-
-JWT errors
-
-Make sure JWT_SECRET is set on the backend.
-
-Security & Notes
-JWT secret should be strong and rotated for production.
-
-Admin credentials are for evaluation. Change them in production environments.
-
-CORS should be limited to known origins in production.
+**Note:** If any hosted URL is temporarily unavailable, a video demo of the full workflow (browsing, cart, checkout, admin) can be provided upon request.
