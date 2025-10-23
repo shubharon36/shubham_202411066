@@ -1,7 +1,12 @@
 // server.js
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-});
+// Load .env in dev/test. In production (Render) it's ok if dotenv isn't installed.
+try {
+  require('dotenv').config({
+    path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+  });
+} catch {
+  console.log('[server] dotenv not found; relying on platform env vars');
+}
 
 const express = require('express');
 const cors = require('cors');
@@ -25,22 +30,13 @@ const allowed = process.env.CORS_ORIGIN
 
 app.use(
   cors({
-    origin: allowed || true, // true reflects request origin
+    origin: allowed || true, // reflect request origin
     credentials: true,
   })
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Only connect to Mongo automatically outside of tests.
-// In tests, your Jest suite connects to the test DB itself.
-if (process.env.NODE_ENV !== 'test') {
-  connectMongoDB();
-}
-
-ensureAdminUser().catch((e) => console.error('ensureAdminUser error:', e));
-
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -68,16 +64,20 @@ app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Connect to MongoDB & start server only when NOT testing
+// Bootstrap (skip when running tests)
 if (process.env.NODE_ENV !== 'test') {
-  connectMongoDB();
+  // Connect to Mongo once
+  connectMongoDB()
+    .then(() => console.log('[server] MongoDB connected'))
+    .catch((e) => console.error('[server] Mongo connection error:', e));
 
-  const PORT = process.env.PORT || 5000;
+  // Ensure admin user exists in Postgres
+  ensureAdminUser().catch((e) => console.error('ensureAdminUser error:', e));
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   });
 }
 
-// always export the app for supertest
 module.exports = app;
