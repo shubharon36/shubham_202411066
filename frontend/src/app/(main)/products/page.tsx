@@ -3,8 +3,6 @@ import { ProductFilters } from "./_components/ProductFilters";
 
 export const dynamic = "force-dynamic";
 
-const API = process.env.NEXT_PUBLIC_API_URL as string; // no fallback
-
 type Search = {
   page?: string;
   query?: string;
@@ -15,15 +13,21 @@ type Search = {
 function isPriceSort(s?: string) {
   return s === "price_asc" || s === "price_desc";
 }
+
 function isNameSort(s?: string) {
   return s === "name_asc" || s === "name_desc";
 }
 
 async function getProducts(params: {
-  page: number; query?: string; category?: string; sort?: Search["sort"];
+  page: number; 
+  query?: string; 
+  category?: string; 
+  sort?: Search["sort"];
 }) {
-  if (!API?.startsWith("http")) {
-    throw new Error("NEXT_PUBLIC_API_URL not set");
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://shubham-202411066.onrender.com';
+  
+  if (!API_URL?.startsWith("http")) {
+    throw new Error("API URL not configured");
   }
 
   const sp = new URLSearchParams();
@@ -32,14 +36,28 @@ async function getProducts(params: {
   if (params.category) sp.set("category", params.category);
   if (isPriceSort(params.sort)) sp.set("sortOrder", params.sort === "price_asc" ? "asc" : "desc");
 
-  const res = await fetch(`${API}/products?${sp.toString()}`, { cache: "no-store" });
-  if (!res.ok) {
-    const t = await res.text().catch(() => "");
-    throw new Error(`API ${res.status} for /products: ${t || res.statusText}`);
-  }
-  const data = await res.json();
+  const url = `${API_URL}/api/products?${sp.toString()}`;
+  console.log('Fetching from:', url);
 
-  let products = (data.products || []).map((p: any) => ({ id: p._id || p.id, ...p }));
+  const res = await fetch(url, { 
+    cache: "no-store",
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    console.error(`API error: ${res.status} - ${text}`);
+    throw new Error(`Failed to fetch products: ${res.status}`);
+  }
+
+  const data = await res.json();
+  let products = (data.products || []).map((p: any) => ({ 
+    id: p._id || p.id, 
+    ...p 
+  }));
+
   if (isNameSort(params.sort)) {
     products.sort((a: any, b: any) => {
       const na = String(a.name ?? "").toLowerCase();
@@ -48,24 +66,43 @@ async function getProducts(params: {
     });
   }
 
-  return { products, totalPages: Number(data?.pagination?.pages ?? 1) };
+  return { 
+    products, 
+    totalPages: Number(data?.pagination?.pages ?? 1) 
+  };
 }
 
-export default async function ProductsPage({ searchParams }: { searchParams: Promise<Search> }) {
-  const sp = await searchParams;
-  const page = Number(sp?.page ?? 1);
+export default async function ProductsPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<Search> 
+}) {
+  try {
+    const sp = await searchParams;
+    const page = Number(sp?.page ?? 1);
+    
+    const { products, totalPages } = await getProducts({
+      page,
+      query: sp?.query,
+      category: sp?.category,
+      sort: sp?.sort,
+    });
 
-  const { products, totalPages } = await getProducts({
-    page,
-    query: sp?.query,
-    category: sp?.category,
-    sort: sp?.sort,
-  });
-
-  return (
-    <div style={{ display: "grid", gap: "var(--spacing-lg)" }}>
-      <ProductFilters />
-      <ProductGrid products={products} totalPages={totalPages} />
-    </div>
-  );
+    return (
+      <div style={{ display: "grid", gap: "var(--spacing-lg)" }}>
+        <ProductFilters />
+        <ProductGrid products={products} totalPages={totalPages} />
+      </div>
+    );
+  } catch (error) {
+    console.error('Error loading products:', error);
+    return (
+      <div style={{ padding: '48px', textAlign: 'center' }}>
+        <h2>Failed to load products</h2>
+        <p style={{ color: '#6B7280', marginTop: '8px' }}>
+          {error instanceof Error ? error.message : 'Please try again later'}
+        </p>
+      </div>
+    );
+  }
 }
