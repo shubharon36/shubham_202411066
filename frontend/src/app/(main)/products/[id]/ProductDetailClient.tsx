@@ -43,7 +43,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           <h1 className={styles.title}>{product.name}</h1>
 
           {/* ₹ price with 80x factor */}
-          <p className={styles.price}>₹{(Number(product.price ?? 0) * 80).toFixed(2)}</p>
+          <p className={styles.price}>${(Number(product.price ?? 0)).toFixed(2)}</p>
 
           <p className={styles.description}>{product.description}</p>
 
